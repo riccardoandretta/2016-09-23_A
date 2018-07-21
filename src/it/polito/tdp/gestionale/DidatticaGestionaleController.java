@@ -27,14 +27,26 @@ public class DidatticaGestionaleController {
 
 	@FXML
 	void doCorsiFrequentati(ActionEvent event) {
-		txtResult.clear();
-		txtResult.setText("premuto Corsi Frequentati");
+		try {
+			txtResult.clear();
+			
+			model.creaGrafo();
+			String result = model.printStats();
+			txtResult.setText(result);
+			
+		} catch (RuntimeException e) {
+			txtResult.setText("Errore di connessione al DB.");
+		}
 	}
-	
+
 	@FXML
 	void doVisualizzaCorsi(ActionEvent event) {
-		txtResult.clear();
-		txtResult.setText("premuto Visualizza Corsi");
+		try {
+			txtResult.clear();
+			txtResult.setText("premuto Visualizza Corsi");
+		} catch (RuntimeException e) {
+			txtResult.setText("Errore di connessione al DB.");
+		}
 	}
 
 	@FXML

@@ -10,7 +10,9 @@ import java.util.List;
 import java.util.Map;
 
 import it.polito.tdp.gestionale.model.Corso;
+import it.polito.tdp.gestionale.model.Iscrizione;
 import it.polito.tdp.gestionale.model.Studente;
+import it.polito.tdp.gestionale.model.StudenteNumeroCorsi;
 
 public class DidatticaDAO {
 
@@ -54,7 +56,7 @@ public class DidatticaDAO {
 
 		final String sql = "SELECT * FROM corso";
 
-		List<Corso> corsi = new LinkedList<Corso>();
+		List<Corso> corsi = new ArrayList<Corso>();
 
 		try {
 			Connection conn = ConnectDB.getConnection();
@@ -98,6 +100,61 @@ public class DidatticaDAO {
 			}
 
 			return studenti;
+
+		} catch (SQLException e) {
+			// e.printStackTrace();
+			throw new RuntimeException("Errore Db");
+		}
+	}
+	
+	public List<Iscrizione> getIscrizioni() {
+
+		final String sql = "SELECT * FROM iscrizione";
+
+		List<Iscrizione> iscrizioni = new LinkedList<>();
+
+		try {
+			Connection conn = ConnectDB.getConnection();
+			PreparedStatement st = conn.prepareStatement(sql);
+
+			ResultSet rs = st.executeQuery();
+
+			while (rs.next()) {
+
+				Iscrizione s = new Iscrizione (new Studente(rs.getInt("matricola")), new Corso(rs.getString("codins")));
+				iscrizioni.add(s);
+			}
+
+			return iscrizioni;
+
+		} catch (SQLException e) {
+			// e.printStackTrace();
+			throw new RuntimeException("Errore Db");
+		}
+	}
+
+	
+	public List<StudenteNumeroCorsi> getNumeroIscrizioniPerStudente() {
+
+		final String sql = "select matricola, count(codins) as corsifrequentati " + 
+				"from iscrizione " + 
+				"group by matricola";
+
+		List<StudenteNumeroCorsi> iscrizioni = new LinkedList<>();
+
+		try {
+			Connection conn = ConnectDB.getConnection();
+			PreparedStatement st = conn.prepareStatement(sql);
+
+			ResultSet rs = st.executeQuery();
+
+			while (rs.next()) {
+
+				StudenteNumeroCorsi s = new StudenteNumeroCorsi (new Studente(rs.getInt("matricola")), rs.getInt("corsifrequentati"));
+				iscrizioni.add(s);
+			}
+
+			return iscrizioni;
 
 		} catch (SQLException e) {
 			// e.printStackTrace();
